@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import dashboardRoutes from './routes/dashboard.routes';
+import incomeRoutes from './routes/income.routes';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/income', incomeRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running smoothly' });
