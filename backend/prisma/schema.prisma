@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String?
+  googleId      String?  @unique
+  appleId       String?  @unique
+  firstName     String?
+  lastName      String?
+  photoUrl      String?
+  phone         String?
+  currency      String   @default("USD")
+  country       String?
+  language      String   @default("en")
+  theme         String   @default("system")
+  monthlyIncome Float?   @default(0)
+  pinLock       String?
+  biometricOn   Boolean  @default(false)
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accounts      Account[]
+  categories    Category[]
+  transactions  Transaction[]
+  budgets       Budget[]
+  goals         Goal[]
+  bills         Bill[]
+  notifications Notification[]
+  recurring     RecurringTransaction[]
+}
+
+model Account {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  type      AccountType
+  balance   Float       @default(0)
+  currency  String      @default("USD")
+  isDefault Boolean     @default(false)
+  color     String?
+  icon      String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  transactions Transaction[] @relation("TransactionAccount")
+  transferDest Transaction[] @relation("TransferDestination")
+}
+
+enum AccountType {
+  CASH
+  BANK
+  CREDIT_CARD
+  DEBIT_CARD
+  WALLET
+  UPI
+  SAVINGS
+  BUSINESS
+}
+
+model Category {
+  id        String          @id @default(uuid())
+  userId    String? // null if it's a default system category
+  user      User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  type      TransactionType
+  icon      String?
+  color     String?
+  isDefault Boolean         @default(false)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  transactions Transaction[]
+  budgets      Budget[]
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+model Transaction {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId String
+  account   Account @relation("TransactionAccount", fields: [accountId], references: [id], onDelete: Cascade)
+
+  // For transfers
+  toAccountId String?
+  toAccount   Account? @relation("TransferDestination", fields: [toAccountId], references: [id], onDelete: SetNull)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  type          TransactionType
+  amount        Float
+  currency      String          @default("USD")
+  date          DateTime
+  time          DateTime?
+  notes         String?
+  merchant      String?
+  paymentMethod PaymentMethod?
+  tags          String[]
+  receiptUrl    String?
+  location      String?
+  isRecurring   Boolean         @default(false)
+  recurringId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  DEBIT_CARD
+  CREDIT_CARD
+  WALLET
+  BANK_TRANSFER
+  NET_BANKING
+  CHEQUE
+}
+
+model Budget {
+  id         String       @id @default(uuid())
+  userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String? // if null, it's an overall budget
+  category   Category?    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amount     Float
+  period     BudgetPeriod
+  startDate  DateTime?
+  endDate    DateTime?
+  alerts     Boolean      @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BudgetPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  CUSTOM
+}
+
+model Goal {
+  id                  String    @id @default(uuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  targetAmount        Float
+  currentAmount       Float     @default(0)
+  deadline            DateTime?
+  monthlyContribution Float?
+  color               String?
+  icon                String?
+  isCompleted         Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bill {
+  id              String              @id @default(uuid())
+  userId          String
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  amount          Float
+  dueDate         DateTime
+  isRecurring     Boolean             @default(false)
+  frequency       RecurringFrequency?
+  isPaid          Boolean             @default(false)
+  reminderEnabled Boolean             @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum RecurringFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+model RecurringTransaction {
+  id            String             @id @default(uuid())
+  userId        String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          TransactionType
+  amount        Float
+  categoryId    String?
+  accountId     String
+  frequency     RecurringFrequency
+  startDate     DateTime
+  endDate       DateTime?
+  lastProcessed DateTime?
+  nextProcess   DateTime?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  relatedId String? // e.g. budgetId, goalId, billId
+
+  createdAt DateTime @default(now())
+}
+
+enum NotificationType {
+  BUDGET_ALERT
+  GOAL_REMINDER
+  BILL_REMINDER
+  WEEKLY_SUMMARY
+  MONTHLY_SUMMARY
+  LOW_BALANCE
+  LARGE_EXPENSE
+  SYSTEM
+}
