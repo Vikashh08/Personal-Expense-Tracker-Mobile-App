@@ -38,6 +38,13 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         passwordHash,
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
+        accounts: {
+          create: {
+            name: 'Cash',
+            type: 'CASH',
+            balance: 0,
+          }
+        }
       },
     });
 
