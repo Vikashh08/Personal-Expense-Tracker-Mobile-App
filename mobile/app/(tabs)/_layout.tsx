@@ -38,7 +38,16 @@ export default function TabsLayout() {
           ),
         }}
       />
-      {/* Future Tabs: Budgets, Analytics, Profile */}
+      <Tabs.Screen
+        name="budgets"
+        options={{
+          title: 'Budgets',
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 24, color }}>🎯</Text>
+          ),
+        }}
+      />
+      {/* Future Tabs: Analytics, Profile */}
     </Tabs>
   );
 }
