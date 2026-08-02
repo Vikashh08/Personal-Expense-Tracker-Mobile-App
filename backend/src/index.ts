@@ -1,6 +1,9 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
+console.log("DB URL: ", process.env.DATABASE_URL ? "Exists" : "MISSING!");
+
 import helmet from 'helmet';
 import morgan from 'morgan';
 
@@ -13,8 +16,6 @@ import transactionRoutes from './routes/transaction.routes';
 import accountRoutes from './routes/account.routes';
 import categoryRoutes from './routes/category.routes';
 import budgetRoutes from './routes/budget.routes';
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5001;
