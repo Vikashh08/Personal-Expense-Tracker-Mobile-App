@@ -3,8 +3,10 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, SafeAreaVi
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardSummary } from '../../src/features/dashboard/api/dashboardApi';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
+import { useRouter } from 'expo-router';
 
 export default function DashboardScreen() {
+  const router = useRouter();
   const { user } = useAuthStore();
   
   const { data, isLoading, isError, refetch, isRefetching } = useQuery({
@@ -44,9 +46,12 @@ export default function DashboardScreen() {
             <Text className="text-slate-500 text-sm">Good Morning,</Text>
             <Text className="text-2xl font-bold text-slate-800">{user?.firstName || 'User'}</Text>
           </View>
-          <View className="w-12 h-12 bg-indigo-100 rounded-full items-center justify-center">
+          <TouchableOpacity 
+            className="w-12 h-12 bg-indigo-100 rounded-full items-center justify-center"
+            onPress={() => router.push('/profile')}
+          >
             <Text className="text-xl">👤</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Main Balance Card */}
