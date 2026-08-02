@@ -18,6 +18,7 @@ import categoryRoutes from './routes/category.routes';
 import budgetRoutes from './routes/budget.routes';
 import goalRoutes from './routes/goal.routes';
 import analyticsRoutes from './routes/analytics.routes';
+import reportRoutes from './routes/report.routes';
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -39,6 +40,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running smoothly' });
