@@ -47,6 +47,15 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="goals"
+        options={{
+          title: 'Goals',
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 24, color }}>🏆</Text>
+          ),
+        }}
+      />
       {/* Future Tabs: Analytics, Profile */}
     </Tabs>
   );
