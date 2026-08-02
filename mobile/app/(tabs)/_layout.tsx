@@ -56,7 +56,16 @@ export default function TabsLayout() {
           ),
         }}
       />
-      {/* Future Tabs: Analytics, Profile */}
+      <Tabs.Screen
+        name="analytics"
+        options={{
+          title: 'Analytics',
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 24, color }}>📊</Text>
+          ),
+        }}
+      />
+      {/* Future Tabs: Profile */}
     </Tabs>
   );
 }
