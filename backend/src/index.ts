@@ -11,6 +11,7 @@ import incomeRoutes from './routes/income.routes';
 import expenseRoutes from './routes/expense.routes';
 import transactionRoutes from './routes/transaction.routes';
 import accountRoutes from './routes/account.routes';
+import categoryRoutes from './routes/category.routes';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/api/income', incomeRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/accounts', accountRoutes);
+app.use('/api/categories', categoryRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running smoothly' });
